@@ -1,0 +1,6 @@
+{
+  "name": "OpenCpp",
+  "description": "Open. Edit. Compile.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
