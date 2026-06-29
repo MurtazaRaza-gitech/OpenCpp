@@ -58,9 +58,24 @@ fun OpenCppNavigation(
         // --- Code Viewer Route ---
         composable<ViewerRoute> {
             ViewerScreen(
-                onBackClick = { navController.popBackStack() }
+                code = """
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello OpenCpp!";
+    return 0;
+}
+        """.trimIndent(),
+
+                fileName = "hello.cpp",
+
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
+
 
         // --- Code Editor Route ---
         composable<EditorRoute> {

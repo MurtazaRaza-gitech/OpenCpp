@@ -26,33 +26,30 @@ import androidx.compose.ui.unit.dp
 import com.example.ui.components.OpenCppTopBar
 import com.example.ui.theme.AppSpacing
 
-private val DEFAULT_SOURCE_CODE = """
-#include <iostream>
-using namespace std;
-
-int main()
-{
-    cout << "Hello OpenCpp";
-    return 0;
-}
-""".trimIndent()
+private const val FALLBACK_FILE_NAME = "Unknown.cpp"
+private const val FALLBACK_CODE = "No code loaded"
 
 /**
  * Source code viewer screen.
  *
  * @param onBackClick Called when the user presses the back button.
- * @param fileName    Name of the file being viewed, displayed below the chip.
- * @param sourceCode  Raw source code string to display. Replace later with a
- *                    real parameter wired to your data layer.
+ * @param code        Raw source code to display. Pass an empty string to show
+ *                    the "No code loaded" placeholder.
+ * @param fileName    Name of the file shown below the READ ONLY chip. Pass an
+ *                    empty string to fall back to "Unknown.cpp".
  * @param modifier    Optional modifier for the root [Scaffold].
  */
 @Composable
 fun ViewerScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    fileName: String = "main.cpp",
-    sourceCode: String = DEFAULT_SOURCE_CODE
+    code: String,
+    fileName: String,
+    modifier: Modifier = Modifier
 ) {
+    val displayedFileName = fileName.ifBlank { FALLBACK_FILE_NAME }
+    val displayedCode = code.ifBlank { FALLBACK_CODE }
+    val isPlaceholder = code.isBlank()
+
     Scaffold(
         modifier = modifier.testTag("viewer_screen"),
         topBar = {
@@ -87,7 +84,7 @@ fun ViewerScreen(
             Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
             Text(
-                text = fileName,
+                text = displayedFileName,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -103,14 +100,18 @@ fun ViewerScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Text(
-                    text = sourceCode,
+                    text = displayedCode,
                     modifier = Modifier
                         .padding(AppSpacing.Medium)
                         .horizontalScroll(rememberScrollState()),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontFamily = FontFamily.Monospace
                     ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (isPlaceholder) {
+                        MaterialTheme.colorScheme.outline
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
                     softWrap = false
                 )
             }
